@@ -1,8 +1,9 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:news_app/model/news_model.dart';
 
-class Sports {
+class General {
   List<NewsModel> newsList = [];
 
   Future<void> getNews() async {
@@ -44,7 +45,7 @@ class Sports {
             urlToImage = item['urlToImage'];
           } else {
             urlToImage =
-                "https://thumbs.dreamstime.com/b/sports-tools-balls-shoes-ground-108686133.jpg";
+                "https://c1.wallpaperflare.com/preview/550/722/478/5ad74bbabbbb6.jpg";
           }
           if (item['publishedAt'] != null) {
             publishedAt = item['publishedAt'];

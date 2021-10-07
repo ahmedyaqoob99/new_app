@@ -1,4 +1,4 @@
-class ArticleModel {
+class NewsModel {
   late String author;
   late String title;
   late String description;
@@ -7,7 +7,7 @@ class ArticleModel {
   late String publishedAt;
   late String content;
 
-  ArticleModel(
+  NewsModel(
       {required this.author,
       required this.title,
       required this.description,

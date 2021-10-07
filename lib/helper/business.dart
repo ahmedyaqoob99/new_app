@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:news_app/model/news_model.dart';
 
-class Sports {
+class Business {
   List<NewsModel> newsList = [];
 
   Future<void> getNews() async {
@@ -44,7 +44,7 @@ class Sports {
             urlToImage = item['urlToImage'];
           } else {
             urlToImage =
-                "https://thumbs.dreamstime.com/b/sports-tools-balls-shoes-ground-108686133.jpg";
+                "https://s.astonaccountants.com.au/wp-content/uploads/businesswoman-670x415.jpg";
           }
           if (item['publishedAt'] != null) {
             publishedAt = item['publishedAt'];

@@ -1,18 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:news_app/helper/sports.dart';
+import 'package:news_app/helper/general.dart';
+import 'package:news_app/screens/detail_screen.dart';
 
-class SportsScreen extends StatefulWidget {
-  const SportsScreen({Key? key}) : super(key: key);
+class TopNewsWidget extends StatefulWidget {
+  const TopNewsWidget({Key? key}) : super(key: key);
 
   @override
-  State<SportsScreen> createState() => _HomeScreenState();
+  State<TopNewsWidget> createState() => _TopNewsWidgetState();
 }
 
-class _HomeScreenState extends State<SportsScreen> {
+class _TopNewsWidgetState extends State<TopNewsWidget> {
   getNewsData() async {
-    News newsClass = News();
+    General newsClass = General();
     await newsClass.getNews();
     return newsClass.newsList;
   }
@@ -20,33 +21,48 @@ class _HomeScreenState extends State<SportsScreen> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    return SafeArea(
-      child: Scaffold(
-        body: ListView(
-          physics: const NeverScrollableScrollPhysics(),
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-              child: Text(
-                "Sports News",
-                style: GoogleFonts.poppins(
-                    textStyle: Theme.of(context).textTheme.headline4),
-              ),
+
+    return Container(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Text(
+              "Top News",
+              style: GoogleFonts.poppins(
+                  textStyle: Theme.of(context).textTheme.headline4),
             ),
-            Container(
-              height: size.height * 0.55,
-              child: FutureBuilder(
-                future: getNewsData(),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text("Error");
-                  } else if (snapshot.hasData) {
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.all(0),
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (context, index) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6),
+          ),
+          Container(
+            height: size.height * 0.48,
+            child: FutureBuilder(
+              future: getNewsData(),
+              builder: (context, AsyncSnapshot snapshot) {
+                if (snapshot.hasError) {
+                  return const Text("Error");
+                } else if (snapshot.hasData) {
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.all(0),
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (context, index) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) {
+                              return DetailScreen(
+                                author: snapshot.data[index].author,
+                                title: snapshot.data[index].title,
+                                description: snapshot.data[index].description,
+                                image: snapshot.data[index].urlToImage,
+                                source: snapshot.data[index].url,
+                                publishedAt: snapshot.data[index].publishedAt,
+                                url: snapshot.data[index].url,
+                              );
+                            }),
+                          );
+                        },
                         child: Stack(
                           children: [
                             ClipRRect(
@@ -58,17 +74,17 @@ class _HomeScreenState extends State<SportsScreen> {
                                     strokeWidth: 3,
                                   ),
                                 ),
-                                imageUrl: snapshot.data[index].image,
+                                imageUrl: snapshot.data[index].urlToImage,
                                 fit: BoxFit.fitHeight,
-                                height: size.height * 50,
-                                width: size.width * 0.70,
+                                height: size.height * 35,
+                                width: size.width * 0.60,
                               ),
                             ),
                             Positioned(
                               bottom: 0,
                               left: 0,
                               child: Container(
-                                width: size.width * 0.72,
+                                width: size.width * 0.60,
                                 height: size.height * 0.28,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
@@ -82,12 +98,14 @@ class _HomeScreenState extends State<SportsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        snapshot.data[index].title,
-                                        style: GoogleFonts.poppins(
-                                          textStyle: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 17,
+                                      Flexible(
+                                        child: Text(
+                                          snapshot.data[index].title,
+                                          style: GoogleFonts.poppins(
+                                            textStyle: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 17,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -119,14 +137,14 @@ class _HomeScreenState extends State<SportsScreen> {
                           ],
                         ),
                       ),
-                    );
-                  }
-                  return Center(child: Text("loading..."));
-                },
-              ),
+                    ),
+                  );
+                }
+                return Center(child: Text("loading..."));
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

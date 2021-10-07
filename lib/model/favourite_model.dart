@@ -1,4 +1,6 @@
-class SportsModel {
+import 'package:flutter/foundation.dart';
+
+class Product with ChangeNotifier {
   final String author;
   final String title;
   final String description;
@@ -6,11 +8,9 @@ class SportsModel {
   final String source;
   final String image;
   final String category;
-  final String language;
-  final String country;
   final String publishedAt;
 
-  SportsModel({
+  Product({
     required this.author,
     required this.title,
     required this.description,
@@ -18,8 +18,18 @@ class SportsModel {
     required this.source,
     required this.image,
     required this.category,
-    required this.language,
-    required this.country,
     required this.publishedAt,
   });
+}
+
+class Products with ChangeNotifier {
+  List<Product> itemList = [];
+
+  List<Product> get items {
+    return [...itemList];
+  }
+
+  Product findById(String title) {
+    return itemList.firstWhere((pdt) => pdt.title == title);
+  }
 }
