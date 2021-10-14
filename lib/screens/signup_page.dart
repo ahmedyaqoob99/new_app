@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'login_page.dart';
 
@@ -68,14 +69,14 @@ class _SignupPageState extends State<SignupPage> {
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text("The password provided is too weak."),
             ),
           );
           print("'weak-password' ==> The password provided is too weak.");
         } else if (e.code == 'email-already-in-use') {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
                 content: Text("The account already exists for that email.")),
           );
           print(
@@ -102,18 +103,18 @@ class _SignupPageState extends State<SignupPage> {
     return SafeArea(
       child: Scaffold(
         body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Form(
             key: _formKey,
             child: ListView(
               children: [
-                SizedBox(height: 100),
+                const SizedBox(height: 100),
                 Text(
                   "SIGN UP",
                   style: Theme.of(context).textTheme.headline3,
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 TextFormField(
                   validator: (value) {
                     if (value == "" || value == null) {
@@ -122,13 +123,13 @@ class _SignupPageState extends State<SignupPage> {
                       return "Username is too short";
                     }
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Username",
                     border: OutlineInputBorder(),
                   ),
                   controller: nameController,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   validator: (value) {
                     if (value == "" || value == null) {
@@ -137,13 +138,13 @@ class _SignupPageState extends State<SignupPage> {
                       return "Email is Invalid";
                     }
                   },
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: "Email",
                     border: OutlineInputBorder(),
                   ),
                   controller: usernameController,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   validator: (value) {
                     if (value == "" || value == null) {
@@ -155,7 +156,7 @@ class _SignupPageState extends State<SignupPage> {
                   obscureText: passHide,
                   decoration: InputDecoration(
                     labelText: "Password",
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     suffixIcon: GestureDetector(
                       onTap: () {
                         // FocusScope.of(context).unfocus();
@@ -164,13 +165,13 @@ class _SignupPageState extends State<SignupPage> {
                         });
                       },
                       child: passHide
-                          ? Icon(Icons.visibility)
-                          : Icon(Icons.visibility_off),
+                          ? const Icon(Icons.visibility)
+                          : const Icon(Icons.visibility_off),
                     ),
                   ),
                   controller: passController,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   validator: (value) {
                     if (value == "" || value == null) {
@@ -184,7 +185,7 @@ class _SignupPageState extends State<SignupPage> {
                   obscureText: passHide,
                   decoration: InputDecoration(
                     labelText: "Password",
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     suffixIcon: GestureDetector(
                       onTap: () {
                         // FocusScope.of(context).unfocus();
@@ -193,36 +194,37 @@ class _SignupPageState extends State<SignupPage> {
                         });
                       },
                       child: passHide
-                          ? Icon(Icons.visibility)
-                          : Icon(Icons.visibility_off),
+                          ? const Icon(Icons.visibility)
+                          : const Icon(Icons.visibility_off),
                     ),
                   ),
                   controller: rePassController,
                 ),
-                SizedBox(height: 30),
+                const SizedBox(height: 30),
                 InkWell(
                   onTap: () async {
                     setState(() {
                       isChange = true;
                     });
 
-                    await Future.delayed(Duration(seconds: 1));
+                    await Future.delayed(const Duration(seconds: 1));
                     validation();
                   },
                   child: AnimatedContainer(
-                    duration: Duration(seconds: 1),
+                    duration: const Duration(seconds: 1),
                     width: isChange ? 45 : 160,
                     height: isChange ? 45 : 45,
                     alignment: Alignment.center,
                     child: isChange
-                        ? Icon(Icons.done_all)
+                        ? const Icon(Icons.done_all)
                         : FittedBox(
                             child: Text(
                               "SignUp",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.bold),
+                              style: GoogleFonts.poppins(
+                                textStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
                             ),
                           ),
                     decoration: BoxDecoration(
@@ -230,11 +232,11 @@ class _SignupPageState extends State<SignupPage> {
                         borderRadius: BorderRadius.circular(isChange ? 45 : 8)),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Already have an account? "),
+                    const Text("Already have an account? "),
                     InkWell(
                       onTap: () => Navigator.push(
                         context,
@@ -242,7 +244,7 @@ class _SignupPageState extends State<SignupPage> {
                           builder: (context) => const LoginPage(),
                         ),
                       ),
-                      child: Text(
+                      child: const Text(
                         "Login",
                         style: TextStyle(
                             color: Colors.purple, fontWeight: FontWeight.bold),

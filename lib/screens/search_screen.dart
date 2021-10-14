@@ -1,7 +1,8 @@
 import 'dart:convert';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:news_app/model/news_model.dart';
 import 'package:http/http.dart' as http;
 
 class SearchScreen extends StatefulWidget {
@@ -12,145 +13,184 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final TextEditingController _filter = TextEditingController();
-  String _searchText = "";
-  List names = [];
-  List filteredNames = [];
-  Icon _searchIcon = const Icon(Icons.search);
-  Widget _appBarTitle = Text(
-    'Search News',
-    style: GoogleFonts.poppins(
-      textStyle:
-          const TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
-    ),
-  );
-
-  _ExamplePageState() {
-    _filter.addListener(() {
-      if (_filter.text.isEmpty) {
-        setState(() {
-          _searchText = "";
-          filteredNames = names;
-        });
-      } else {
-        setState(() {
-          _searchText = _filter.text;
-        });
-      }
-    });
-  }
+  List<NewsModel> newsList = [];
+  TextEditingController searchController =
+      TextEditingController(text: "sports");
 
   @override
   void initState() {
-    // _getNames();
+    // TODO: implement initState
     super.initState();
+    getNews();
   }
 
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          InkWell(
-            onTap: _searchPressed,
-            child: Container(
-              padding: EdgeInsets.all(10),
-              alignment: Alignment.bottomCenter,
-              child: _appBarTitle,
-            ),
-          ),
-          Container(
-            height: MediaQuery.of(context).size.height,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: NetworkImage(
-                    "https://th.bing.com/th/id/R.6abefd451085322d45e71128ef2339ad?rik=SiWgBdDIyspu7A&riu=http%3a%2f%2fgifimage.net%2fwp-content%2fuploads%2f2017%2f09%2fanimated-gif-search.gif&ehk=Z0Um2o3vSlk38xP7XYeqGnqYi%2b11v9LPJ0ULGM%2b9Ao8%3d&risl=&pid=ImgRaw&r=0"),
-              ),
-            ),
-            child: FutureBuilder(
-                future: _getNames(),
-                builder: (context, AsyncSnapshot snap) {
-                  return _buildList();
-                }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.purple,
-      actions: [
-        IconButton(
-          icon: _searchIcon,
-          onPressed: _searchPressed,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildList() {
-    if (!(_searchText.isEmpty)) {
-      List tempList = [];
-      for (int i = 0; i < filteredNames.length; i++) {
-        if (filteredNames[i]['name']
-            .toLowerCase()
-            .contains(_searchText.toLowerCase())) {
-          tempList.add(filteredNames[i]);
+  Future<void> getNews() async {
+    try {
+      var url = Uri.parse(
+          "https://newsapi.org/v2/everything?q=${searchController.text}&apiKey=a8924996f914478080395cbd19c4e075");
+      var response = await http.get(url);
+      var jsonData = jsonDecode(response.body);
+      if (jsonData['status'] == "ok") {
+        for (var item in jsonData['articles']) {
+          String title;
+          String author;
+          String url;
+          String urlToImage;
+          String description;
+          String content;
+          String publishedAt;
+          if (item['author'] != null) {
+            author = item['author'];
+          } else {
+            author = "";
+          }
+          if (item['title'] != null) {
+            title = item['title'];
+          } else {
+            title = "";
+          }
+          if (item['description'] != null) {
+            description = item['description'];
+          } else {
+            description = "";
+          }
+          if (item['url'] != null) {
+            url = item['url'];
+          } else {
+            url = "";
+          }
+          if (item['urlToImage'] != null) {
+            urlToImage = item['urlToImage'];
+          } else {
+            urlToImage =
+                "https://s.astonaccountants.com.au/wp-content/uploads/businesswoman-670x415.jpg";
+          }
+          if (item['publishedAt'] != null) {
+            publishedAt = item['publishedAt'];
+          } else {
+            publishedAt = "";
+          }
+          if (item['content'] != null) {
+            content = item['content'];
+          } else {
+            content = "";
+          }
+          try {
+            NewsModel articleModel = NewsModel(
+              title: title,
+              author: author,
+              content: content,
+              description: description,
+              urlToImage: urlToImage,
+              url: url,
+              publishedAt: publishedAt,
+            );
+            newsList.add(articleModel);
+          } catch (e) {
+            print("Article Model Error ==> $e");
+          }
         }
       }
-      filteredNames = tempList;
+    } catch (e) {
+      print("News Api Error -->> $e");
     }
-    return ListView.builder(
-      itemCount: names == null ? 0 : filteredNames.length,
-      itemBuilder: (BuildContext context, int index) {
-        return ListTile(
-          title: Text(filteredNames[index]['name']),
-          onTap: () => print(filteredNames[index]['name']),
-        );
-      },
+  }
+
+  searching() {
+    getNews();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      physics: const BouncingScrollPhysics(),
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        height: size.height,
+        child: Column(
+          children: [
+            TextFormField(
+              controller: searchController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Search Here",
+              ),
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: ElevatedButton(
+                onPressed: searching,
+                child: const Text("Search"),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                physics: const ClampingScrollPhysics(),
+                padding: const EdgeInsets.all(0),
+                itemCount: newsList.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Card(
+                      margin: const EdgeInsets.all(5),
+                      child: ListTile(
+                        leading: Hero(
+                          tag: newsList[index].title,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: CachedNetworkImage(
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.purple,
+                                  strokeWidth: 3,
+                                ),
+                              ),
+                              imageUrl: newsList[index].urlToImage,
+                              fit: BoxFit.fitHeight,
+                              width: 80,
+                            ),
+                          ),
+                        ),
+                        title: Text(
+                          newsList[index].title,
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        subtitle: Text(
+                          newsList[index].publishedAt,
+                          style: GoogleFonts.poppins(
+                            textStyle: const TextStyle(
+                              // color: Colors.white,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                        trailing: GestureDetector(
+                            onTap: () {},
+                            child: const Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                              size: 20.0,
+                            )),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
-  }
-
-  void _searchPressed() {
-    setState(() {
-      if (_searchIcon.icon == Icons.search) {
-        _searchIcon = const Icon(Icons.close, color: Colors.purple);
-        _appBarTitle = TextField(
-          controller: _filter,
-          decoration: InputDecoration(
-            prefixIcon: Icon(Icons.search, color: Colors.purple),
-            hintText: _filter.text,
-            label: Text("Search Here"),
-          ),
-        );
-      } else {
-        _searchIcon = const Icon(Icons.search, color: Colors.purple);
-        _appBarTitle = Text(
-          'Search News',
-          style: GoogleFonts.poppins(
-            textStyle:
-                TextStyle(fontWeight: FontWeight.bold, color: Colors.purple),
-          ),
-        );
-        filteredNames = names;
-        _filter.clear();
-      }
-    });
-  }
-
-  _getNames() async {
-    final response = await http.get(Uri.parse(
-        'http://api.mediastack.com/v1/news?access_key=880ca5c4f3c81a5227dc07a33cf1ba72&languages=en&search=${_filter.text}'));
-    var jsonData = jsonDecode(response.body);
-    List tempList = [];
-    for (int i = 0; i < jsonData[0].length; i++) {
-      tempList.add(jsonData[0][i]);
-    }
-    setState(() {
-      names = tempList;
-      names.shuffle();
-      filteredNames = names;
-    });
   }
 }

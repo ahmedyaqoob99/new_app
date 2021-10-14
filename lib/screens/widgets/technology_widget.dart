@@ -34,6 +34,7 @@ class _TechnologyWidgetState extends State<TechnologyWidget> {
           } else if (snapshot.hasData) {
             return ListView.builder(
               scrollDirection: Axis.vertical,
+              physics: ClampingScrollPhysics(),
               padding: const EdgeInsets.all(0),
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) => Container(
@@ -79,7 +80,7 @@ class _TechnologyWidgetState extends State<TechnologyWidget> {
                         style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             // color: Colors.white,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),
                         ),
                       ),
@@ -88,7 +89,7 @@ class _TechnologyWidgetState extends State<TechnologyWidget> {
                         style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             // color: Colors.white,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),
                         ),
                       ),

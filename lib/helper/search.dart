@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:news_app/model/news_model.dart';
 
-class Technology {
+class Search {
   List<NewsModel> newsList = [];
 
   Future<void> getNews() async {
     try {
       var url = Uri.parse(
-          "https://newsapi.org/v2/top-headlines?country=de&category=technology&apiKey=a8924996f914478080395cbd19c4e075");
+          "https://newsapi.org/v2/everything?q=bitcoin&apiKey=a8924996f914478080395cbd19c4e075");
       var response = await http.get(url);
       var jsonData = jsonDecode(response.body);
       if (jsonData['status'] == "ok") {
@@ -44,7 +44,7 @@ class Technology {
             urlToImage = item['urlToImage'];
           } else {
             urlToImage =
-                "https://content.thriveglobal.com/wp-content/uploads/2020/07/Modren-Tech.jpg";
+                "https://s.astonaccountants.com.au/wp-content/uploads/businesswoman-670x415.jpg";
           }
           if (item['publishedAt'] != null) {
             publishedAt = item['publishedAt'];

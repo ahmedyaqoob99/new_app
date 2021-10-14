@@ -8,7 +8,7 @@ class Health {
   Future<void> getNews() async {
     try {
       var url = Uri.parse(
-          "https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=a8924996f914478080395cbd19c4e075");
+          "https://newsapi.org/v2/top-headlines?country=de&category=health&apiKey=a8924996f914478080395cbd19c4e075");
       var response = await http.get(url);
       var jsonData = jsonDecode(response.body);
       if (jsonData['status'] == "ok") {

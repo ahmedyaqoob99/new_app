@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
-class DetailScreen extends StatelessWidget {
+class DetailScreen extends StatefulWidget {
   late String author;
   String title;
   String description;
@@ -24,6 +26,18 @@ class DetailScreen extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return SafeArea(
@@ -41,7 +55,7 @@ class DetailScreen extends StatelessWidget {
         body: Stack(
           children: [
             Hero(
-              tag: title,
+              tag: widget.title,
               child: CachedNetworkImage(
                 placeholder: (context, url) => const Center(
                   child: CircularProgressIndicator(
@@ -49,7 +63,7 @@ class DetailScreen extends StatelessWidget {
                     strokeWidth: 3,
                   ),
                 ),
-                imageUrl: image,
+                imageUrl: widget.image,
                 fit: BoxFit.fitHeight,
                 height: size.height,
                 width: size.width,
@@ -69,7 +83,7 @@ class DetailScreen extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      title,
+                      widget.title,
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: Colors.white,
@@ -96,7 +110,7 @@ class DetailScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Author: $author",
+                              "Author: ${widget.author}",
                               style: GoogleFonts.poppins(
                                 textStyle: const TextStyle(
                                   // color: Colors.white,
@@ -109,7 +123,7 @@ class DetailScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 15),
                         Text(
-                          description,
+                          widget.description,
                           style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                               // color: Colors.white,
@@ -119,7 +133,7 @@ class DetailScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 15),
                         Text(
-                          publishedAt,
+                          widget.publishedAt,
                           style: GoogleFonts.poppins(
                             textStyle: const TextStyle(
                               fontSize: 17,
@@ -129,7 +143,26 @@ class DetailScreen extends StatelessWidget {
                         const SizedBox(height: 15),
                         Center(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (_) {
+                                  return DraggableScrollableSheet(
+                                    initialChildSize: 0.9,
+                                    minChildSize: 0.9,
+                                    maxChildSize: 0.9,
+                                    builder: (__, con) {
+                                      return WebView(
+                                        initialUrl: widget.url,
+                                        javascriptMode:
+                                            JavascriptMode.unrestricted,
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
                             child: Text(
                               "View More",
                               style: GoogleFonts.poppins(

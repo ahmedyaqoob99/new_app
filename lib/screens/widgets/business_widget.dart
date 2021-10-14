@@ -32,8 +32,10 @@ class _BusinessWidgetState extends State<BusinessWidget> {
           if (snapshot.hasError) {
             return const Text("Error");
           } else if (snapshot.hasData) {
+            print("Business");
             return ListView.builder(
               scrollDirection: Axis.vertical,
+              physics: ClampingScrollPhysics(),
               padding: const EdgeInsets.all(0),
               itemCount: snapshot.data.length,
               itemBuilder: (context, index) => Container(
@@ -79,7 +81,7 @@ class _BusinessWidgetState extends State<BusinessWidget> {
                         style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             // color: Colors.white,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),
                         ),
                       ),
@@ -88,7 +90,7 @@ class _BusinessWidgetState extends State<BusinessWidget> {
                         style: GoogleFonts.poppins(
                           textStyle: const TextStyle(
                             // color: Colors.white,
-                            fontSize: 17,
+                            fontSize: 15,
                           ),
                         ),
                       ),

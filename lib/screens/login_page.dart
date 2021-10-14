@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:news_app/main.dart';
+import 'package:news_app/screens/main_screen.dart';
 import 'package:news_app/screens/signup_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -52,10 +54,18 @@ class _LoginPageState extends State<LoginPage> {
         if (e.code == 'user-not-found') {
           ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("No user found for that email.")));
+
+          setState(() {
+            isChange = false;
+          });
           print('No user found for that email.');
         } else if (e.code == 'wrong-password') {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('Wrong password provided for that user.')));
+
+          setState(() {
+            isChange = false;
+          });
           print('Wrong password provided for that user.');
         }
       }
@@ -102,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                     prefixIcon: Icon(CupertinoIcons.envelope),
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: passController,
                   validator: (value) {
@@ -147,13 +157,14 @@ class _LoginPageState extends State<LoginPage> {
                     alignment: Alignment.center,
                     child: isChange
                         ? const Icon(Icons.done_all)
-                        : const FittedBox(
+                        : FittedBox(
                             child: Text(
                               "Login",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.bold),
+                              style: GoogleFonts.poppins(
+                                textStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
                             ),
                           ),
                     decoration: BoxDecoration(
@@ -168,34 +179,34 @@ class _LoginPageState extends State<LoginPage> {
                     setState(() {
                       isGuest = true;
                     });
-
                     await Future.delayed(const Duration(seconds: 1));
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const MyHomePage(),
+                        builder: (context) => const MainScreen(),
                       ),
                     );
                   },
                   child: AnimatedContainer(
                     duration: const Duration(seconds: 1),
-                    width: isChange ? 45 : 160,
-                    height: isChange ? 45 : 45,
+                    width: isGuest ? 45 : 160,
+                    height: isGuest ? 45 : 45,
                     alignment: Alignment.center,
-                    child: isChange
+                    child: isGuest
                         ? const Icon(Icons.done_all)
-                        : const FittedBox(
+                        : FittedBox(
                             child: Text(
                               "Login As Guest",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.bold),
+                              style: GoogleFonts.poppins(
+                                textStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
                             ),
                           ),
                     decoration: BoxDecoration(
                       color: Colors.purple,
-                      borderRadius: BorderRadius.circular(isChange ? 45 : 8),
+                      borderRadius: BorderRadius.circular(isGuest ? 45 : 8),
                     ),
                   ),
                 ),
